@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GBDA Fall 2026 Guidebook</title>
+<style>
+  :root{
+    --paper:#F7F5EF;
+    --panel:#FFFFFF;
+    --ink:#1B1B18;
+    --ink-soft:#5B5A53;
+    --line:#E2DFD3;
+    --gold:#C8971F;
+    --gold-deep:#8C6812;
+    --danger:#A5432E;
+    --good:#3F6B3B;
+    --c206:#2B6E6E;
+    --c228:#B5541A;
+    --c201:#7A3B69;
+    --c203:#35407A;
+    --c205:#3F6B3B;
+    --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    font-size:15px;
+    line-height:1.5;
+  }
+  h1,h2,h3,h4{
+    font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif;
+    font-weight:600;
+    margin:0 0 .4em 0;
+    letter-spacing:.2px;
+  }
+  .app{display:flex;min-height:100vh;}
+  /* Sidebar */
+  .sidebar{
+    width:220px;
+    flex-shrink:0;
+    background:#151412;
+    color:#EFEBDD;
+    padding:22px 0;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  .brand{
+    padding:0 18px 18px 18px;
+    border-bottom:1px solid #35332C;
+    margin-bottom:10px;
+  }
+  .brand .term{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1.4px;
+    color:var(--gold);
+  }
+  .brand h1{
+    font-size:19px;
+    color:#fff;
+    margin-top:4px;
+  }
+  .navgroup-label{
+    font-size:11px;
+    color:#8B8878;
+    padding:14px 18px 6px 18px;
+    letter-spacing:.5px;
+  }
+  .navitem{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:9px 18px;
+    cursor:pointer;
+    border-left:3px solid transparent;
+    color:#D9D5C4;
+    font-size:14px;
+  }
+  .navitem:hover{background:#211F1A;}
+  .navitem.active{
+    background:#211F1A;
+    border-left-color:var(--gold);
+    color:#fff;
+  }
+  .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+  /* Main */
+  .main{flex:1;padding:34px 40px 80px 40px;max-width:900px;}
+  .view{display:none;}
+  .view.active{display:block;}
+  .course-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    padding-bottom:14px;
+    margin-bottom:22px;
+    border-bottom:3px solid var(--accent,var(--gold));
+  }
+  .course-head h2{font-size:26px;color:var(--accent,var(--ink));}
+  .course-head .code{
+    font-family:Georgia,serif;
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+  .meta-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:22px;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:26px;
+  }
+  .meta-row div span{display:block;color:var(--ink);font-size:14px;margin-top:1px;}
+  section.block{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 22px;
+    margin-bottom:20px;
+  }
+  section.block h3{
+    font-size:15px;
+    text-transform:none;
+    color:var(--accent,var(--ink));
+    margin-bottom:12px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--line);
+  }
+  .check-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:7px 0;
+    border-bottom:1px dashed var(--line);
+  }
+  .check-row:last-child{border-bottom:none;}
+  .check-row input[type=checkbox]{
+    margin-top:3px;
+    width:16px;height:16px;
+    accent-color:var(--accent,var(--gold));
+    flex-shrink:0;
+  }
+  .check-row label{cursor:pointer;flex:1;}
+  .check-row .due{
+    font-size:12px;
+    color:var(--ink-soft);
+    display:block;
+    margin-top:1px;
+  }
+  .check-row.done label{text-decoration:line-through;color:var(--ink-soft);}
+  .progress-wrap{
+    height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin:4px 0 16px 0;
+  }
+  .progress-bar{height:100%;background:var(--accent,var(--gold));width:0%;transition:width .25s;}
+  .progress-label{font-size:12px;color:var(--ink-soft);margin-bottom:2px;}
+  table.grade-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  table.grade-table th{
+    text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px;
+    color:var(--ink-soft);padding:6px 8px;border-bottom:2px solid var(--line);
+  }
+  table.grade-table td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  table.grade-table input[type=number]{
+    width:64px;padding:5px 6px;border:1px solid var(--line);border-radius:3px;font-size:13.5px;
+  }
+  .subgrid{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+  .subgrid input[type=number]{width:52px;}
+  .subgrid .sub-item{font-size:11px;color:var(--ink-soft);text-align:center;}
+  .calc-summary{
+    display:flex;gap:26px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);
+  }
+  .calc-summary .stat{min-width:140px;}
+  .calc-summary .stat .num{font-size:26px;font-family:Georgia,serif;color:var(--accent,var(--ink));}
+  .calc-summary .stat .lbl{font-size:12px;color:var(--ink-soft);}
+  .target-row{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  .target-row input[type=number]{width:70px;padding:6px 8px;border:1px solid var(--line);border-radius:3px;}
+  .needed-msg{
+    margin-top:10px;padding:10px 12px;border-radius:3px;font-size:13.5px;
+    background:#F2F0E6;border:1px solid var(--line);
+  }
+  .needed-msg.ok{border-color:var(--good);color:var(--good);background:#EEF3EC;}
+  .needed-msg.bad{border-color:var(--danger);color:var(--danger);background:#F5EAE7;}
+  button{
+    font-family:inherit;font-size:13.5px;cursor:pointer;
+    background:var(--accent,var(--gold));color:#fff;border:none;
+    padding:9px 16px;border-radius:3px;
+  }
+  button.ghost{background:transparent;color:var(--accent,var(--ink));border:1px solid var(--line);}
+  button:hover{filter:brightness(0.94);}
+  textarea.export-box{
+    width:100%;min-height:340px;margin-top:14px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12.5px;padding:12px;border:1px solid var(--line);border-radius:3px;background:#FCFBF7;
+  }
+  .pill{
+    display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;
+    background:var(--line);color:var(--ink-soft);margin-left:8px;
+  }
+  .policy-item{font-size:13.5px;margin-bottom:8px;}
+  .policy-item b{color:var(--accent,var(--ink));}
+  .overview-card{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 16px;border:1px solid var(--line);border-radius:3px;margin-bottom:10px;
+    border-left:5px solid var(--course-color);cursor:pointer;background:var(--panel);
+  }
+  .overview-card:hover{background:#FBFAF5;}
+  .overview-card h4{margin:0;font-size:16px;}
+  .overview-card .sub{font-size:12.5px;color:var(--ink-soft);}
+  .overview-card .go{font-size:12px;color:var(--ink-soft);}
+  .note{font-size:12.5px;color:var(--ink-soft);margin-top:6px;}
+  @media (max-width:800px){
+    .app{flex-direction:column;}
+    .sidebar{width:100%;height:auto;position:relative;display:flex;overflow-x:auto;padding:12px 0;}
+    .brand{display:none;}
+    .navgroup-label{display:none;}
+    .navitem{white-space:nowrap;border-left:none;border-bottom:3px solid transparent;padding:8px 14px;}
+    .navitem.active{border-left:none;border-bottom-color:var(--gold);}
+    .main{padding:20px;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="term">Fall 2026 · Stratford</div>
+      <h1>GBDA Guidebook</h1>
+    </div>
+    <div class="navgroup-label">Overview</div>
+    <div class="navitem" data-view="overview"><span class="dot" style="background:var(--gold)"></span>All Courses</div>
+    <div class="navgroup-label">Courses</div>
+    <div class="navitem" data-view="c206"><span class="dot" style="background:var(--c206)"></span>GBDA 206</div>
+    <div class="navitem" data-view="c228"><span class="dot" style="background:var(--c228)"></span>GBDA 228</div>
+    <div class="navitem" data-view="c201"><span class="dot" style="background:var(--c201)"></span>GBDA 201</div>
+    <div class="navitem" data-view="c203"><span class="dot" style="background:var(--c203)"></span>GBDA 203</div>
+    <div class="navitem" data-view="c205"><span class="dot" style="background:var(--c205)"></span>GBDA 205</div>
+    <div class="navgroup-label">Tools</div>
+    <div class="navitem" data-view="tracker"><span class="dot" style="background:#EFEBDD"></span>Study Tracker Export</div>
+  </nav>
+
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="view" id="view-overview">
+      <div class="course-head"><h2>Fall 2026 — All Courses</h2></div>
+      <div id="overview-list"></div>
+      <p class="note">Tap a course to open its checklist, deadlines and grade calculator. Everything you check off is saved automatically on this device.</p>
+    </div>
+
+    <!-- Course views get injected here -->
+    <div id="course-views"></div>
+
+    <!-- TRACKER -->
+    <div class="view" id="view-tracker">
+      <div class="course-head" style="--accent:#5B5A53"><h2>Study Tracker Export</h2></div>
+      <section class="block">
+        <h3>Paste this into another chat to build a weekly study schedule</h3>
+        <p class="note">This pulls your five courses' weekly topics, grading weights and every remaining deadline into one text block. Paste it into a chat where you've shared your weekly availability, and ask it to slot in study/homework blocks around your schedule.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <button onclick="generateTracker('upcoming')">Next 14 Days Only</button>
+          <button class="ghost" onclick="generateTracker('full')">Full Semester Summary</button>
+          <button class="ghost" onclick="copyTracker()">Copy to Clipboard</button>
+        </div>
+        <textarea class="export-box" id="tracker-output" readonly></textarea>
+      </section>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ---------------------------------------------------------------
+   DATA
+--------------------------------------------------------------- */
+const COURSES = {
+  c206: {
+    code:"GBDA 206", name:"Introduction to Business Financials", color:"var(--c206)",
+    instructor:"S. Findlay", ta:"Zeinab Akhavanhamzeh",
+    meet:"Mondays, 1:30 – 4:20 PM", room:"DMS 3022 (Stratford)", section:"Section 002",
+    resources:[
+      {label:"Basic hand-held calculator ($10–$30)", note:"Required — bring to every class + both midterms + final."},
+      {label:"(Optional) Phillips & Libby, Fundamentals of Financial Accounting", note:"Recommended further reading, not required."},
+    ],
+    assignments:[
+      {label:"Individual Practicum 1", due:"Sep 21 (in class)"},
+      {label:"Individual Practicum 2", due:"Sep 28 (in class)"},
+      {label:"Individual Practicum 3", due:"Oct 5 (in class)"},
+      {label:"Group Practicum 1", due:"Oct 5 (in class)"},
+      {label:"Midterm 1 (covers Classes 1–4)", due:"Oct 19, in class, closed-book, 50 min"},
+      {label:"Individual Practicum 4", due:"Oct 26 (in class)"},
+      {label:"Individual Practicum 5", due:"Nov 2 (in class)"},
+      {label:"Group Practicum 2", due:"Nov 2 (in class)"},
+      {label:"Midterm 2 (cumulative Classes 1–7)", due:"Nov 9, in class, closed-book, 50 min"},
+      {label:"Individual Practicum 6", due:"Nov 16 (in class)"},
+      {label:"Individual Practicum 7", due:"Nov 23 (in class)"},
+      {label:"Group Practicum 3", due:"Nov 23 (in class)"},
+      {label:"Individual Practicum 8", due:"Nov 30 (in class)"},
+      {label:"Final Exam (cumulative, 1 hr, 2 pages notes + calculator only)", due:"Dec 7, in class"},
+    ],
+    grading:[
+      {key:"prac", label:"Individual Practicum (best 6 of 8)", weight:20, type:"bestN", n:8, best:6},
+      {key:"grp1", label:"Group Practicum 1", weight:10, type:"single"},
+      {key:"grp2", label:"Group Practicum 2", weight:10, type:"single"},
+      {key:"grp3", label:"Group Practicum 3", weight:10, type:"single"},
+      {key:"mt1", label:"Midterm 1", weight:15, type:"single"},
+      {key:"mt2", label:"Midterm 2", weight:15, type:"single"},
+      {key:"final", label:"Final Exam", weight:20, type:"single"},
+    ],
+    policies:[
+      "No AI permitted in this course — all practicums, midterms, and the final are closed-book / no devices.",
+      "No make-up for missed Group Practicums; team assigned only if present that day.",
+      "Numerical grading only, whole/half marks (e.g. 7.5/10)."
+    ],
+    schedule:[
+      ["Sep 14","Class 1 — Course outline; Business Decisions & Financial Accounting",""],
+      ["Sep 21","Class 2 — The Income Statement","Individual Practicum 1 due"],
+      ["Sep 28","Class 3 — The Balance Sheet","Individual Practicum 2 due"],
+      ["Oct 5","Class 4 — Cash Flow Statement","Practicum 3 + Group Practicum 1 due"],
+      ["Oct 12–16","NO CLASS — Fall Break",""],
+      ["Oct 19","Class 5 — MIDTERM 1 (Classes 1–4)",""],
+      ["Oct 26","Class 6 — Understanding & Interpreting Financial Performance","Individual Practicum 4 due"],
+      ["Nov 2","Class 7 — Managing Working Capital & Budgeting","Practicum 5 + Group Practicum 2 due"],
+      ["Nov 9","Class 8 — MIDTERM 2 (Cumulative, Classes 1–7)",""],
+      ["Nov 16","Class 9 — Financing: Ways Businesses Obtain Money","Individual Practicum 6 due"],
+      ["Nov 23","Class 10 — Cost of Capital; Time Value of Money","Practicum 7 + Group Practicum 3 due"],
+      ["Nov 30","Class 11 — Final Exam Review","Practicum 8 due"],
+      ["Dec 7","Class 12 — FINAL EXAM (Cumulative)",""],
+    ]
+  },
+  c228: {
+    code:"GBDA 228", name:"Digital Imaging for Online Applications", color:"var(--c228)",
+    instructor:"Greg J. Smith", ta:"Veronique Wang (remote marker)",
+    meet:"Wednesdays, 1:30 – 4:20 PM", room:"DMS 2024 (Stratford)", section:"Section 002",
+    resources:[
+      {label:"netnet (open source code editor)", note:"Required, free — set up with GitHub integration by Week 4."},
+      {label:"(Optional) Jon Duckett, HTML and CSS: Design and Build Websites (~$36)", note:"Recommended, used copies OK."},
+      {label:"GitHub account", note:"Required for Exercise 3 (Week 4) onward."},
+    ],
+    assignments:[
+      {label:"Exercise 1 — HTML Fundamentals", due:"Week 2, Sep 16"},
+      {label:"Exercise 2 — Graphics, Colour, Tables", due:"Week 3, Sep 23"},
+      {label:"Exercise 3 — GitHub Setup", due:"Week 4, Sep 30"},
+      {label:"Assignment 1 — Website Analysis & Critique (10%)", due:"Oct 6, 11:59 PM"},
+      {label:"Exercise 4 — Intro to CSS", due:"Week 5, Oct 7"},
+      {label:"Exercise 5 — CSS Positioning", due:"Week 6, Oct 21"},
+      {label:"Exercise 6 — Menus & Nav Bars", due:"Week 7, Oct 28"},
+      {label:"Assignment 2 — Website Redesign & Prototyping (25%)", due:"Nov 3, 11:59 PM"},
+      {label:"Exercise 7 — Typography", due:"Week 8, Nov 4"},
+      {label:"Exercise 8 — Responsive Web Design", due:"Week 9, Nov 11"},
+      {label:"Assignment 3 — Personal Webpage Design & Implementation (35%)", due:"Dec 8, 11:59 PM"},
+      {label:"Netnet UX feedback (surveys / bug reports)", due:"Ongoing"},
+    ],
+    grading:[
+      {key:"a1", label:"Assignment 1 — Website Analysis & Critique", weight:10, type:"single"},
+      {key:"a2", label:"Assignment 2 — Website Redesign & Prototyping", weight:25, type:"single"},
+      {key:"a3", label:"Assignment 3 — Personal Webpage", weight:35, type:"single"},
+      {key:"ex", label:"Weekly Exercises (avg. of 8)", weight:15, type:"avgN", n:8},
+      {key:"att", label:"Attendance", weight:10, type:"single"},
+      {key:"ux", label:"Netnet UX Feedback", weight:5, type:"single"},
+    ],
+    policies:[
+      "Late penalty: 5%/day, up to 30% max; zero after 2 weeks late.",
+      "Studio course — 50/50 design & intro front-end (HTML/CSS), not a CS course.",
+    ],
+    schedule:[
+      ["Sep 9","Week 1 — Course outline",""],
+      ["Sep 16","Week 2 — HTML Fundamentals","Exercise 1 due"],
+      ["Sep 23","Week 3 — Graphics, Colour, Tables","Exercise 2 due"],
+      ["Sep 30","Week 4 — GitHub Setup","Exercise 3 due"],
+      ["Oct 6","Assignment 1 due, 11:59 PM","Website Analysis & Critique"],
+      ["Oct 7","Week 5 — Intro to CSS","Exercise 4 due"],
+      ["Oct 12–16","NO CLASS — Fall Break",""],
+      ["Oct 21","Week 6 — CSS Positioning","Exercise 5 due"],
+      ["Oct 28","Week 7 — Menus and Nav Bars","Exercise 6 due"],
+      ["Nov 3","Assignment 2 due, 11:59 PM","Website Redesign & Prototyping"],
+      ["Nov 4","Week 8 — Typography","Exercise 7 due"],
+      ["Nov 11","Week 9 — Responsive Web Design","Exercise 8 due"],
+      ["Nov 18","Week 10 — Final Project Work Session",""],
+      ["Nov 25","Week 11 — Final Project Work Session",""],
+      ["Dec 2","Week 12 — Final Project Work Session",""],
+      ["Dec 8","Assignment 3 due, 11:59 PM","Personal Webpage Design & Implementation"],
+    ]
+  },
+  c201: {
+    code:"GBDA 201", name:"Digital Media Project 1", color:"var(--c201)",
+    instructor:"Jonathan Baltrusaitis", ta:"Afreen Ali",
+    meet:"Wednesdays, 9:00 – 11:50 AM", room:"DMS 3129 (Stratford)", section:"Section 001",
+    resources:[
+      {label:"Adobe Creative Suite (Premiere Pro, Audition)", note:"Recommended, ~$109 via W Store student discount."},
+      {label:"Portable external hard drive, USB-C/USB3, 500GB–1TB", note:"Recommended, $40–$140."},
+      {label:"Paper notebook + pen/pencil", note:"Required, ~$3–$15 — laptops/phones closed for part of each class."},
+      {label:"Camera & tripod (Media Services sign-out)", note:"Needed Week 1 for the Photography project."},
+      {label:"Audio kit (Media Services sign-out)", note:"Needed Week 5 for the Audio project."},
+    ],
+    assignments:[
+      {label:"PRJ1 — Photography (10%)", due:"Sep 15 (night before Week 2 class)"},
+      {label:"PRJ2 — Treatment", due:"Sep 22 (night before Week 3 class)"},
+      {label:"PRJ2 — Roughcut", due:"Sep 29 (night before Week 4 class)"},
+      {label:"PRJ2 — Final (Video, 20% total)", due:"Oct 6 (night before Week 5 class)"},
+      {label:"PRJ3 — Treatment", due:"Oct 20 (night before Week 6 class)"},
+      {label:"Group Documentary Pitch (PRJ4, all members present)", due:"Oct 28, Week 7 class"},
+      {label:"PRJ3 — Roughcut", due:"Nov 3 (night before Week 8 class)"},
+      {label:"PRJ4 — Treatment & Production Plan", due:"Nov 3 (night before Week 8 class)"},
+      {label:"PRJ3 — Final Mix (Audio, 20% total)", due:"Nov 10 (night before Week 9 class)"},
+      {label:"Work Journal Part 1", due:"Nov 10 (night before Week 9 class)"},
+      {label:"PRJ4 — Roughcut", due:"Nov 24 (night before Week 11 class)"},
+      {label:"PRJ4 — Final (Documentary, group, 30%)", due:"Dec 1 (night before Week 12 class)"},
+      {label:"All production paperwork", due:"Dec 1 (night before Week 12 class)"},
+      {label:"Work Journal Part 2", due:"Final assessment period — confirm exact date on LEARN"},
+    ],
+    grading:[
+      {key:"prj1", label:"PRJ1 — Photography", weight:10, type:"single"},
+      {key:"prj2", label:"PRJ2 — Video", weight:20, type:"single"},
+      {key:"prj3", label:"PRJ3 — Audio", weight:20, type:"single"},
+      {key:"prj4", label:"PRJ4 — Documentary (group)", weight:30, type:"single"},
+      {key:"wj", label:"Work Journal & Peer Evaluation", weight:10, type:"single"},
+      {key:"att", label:"Attendance", weight:10, type:"single"},
+    ],
+    policies:[
+      "Late penalty: 5%/day, zero after 2 weeks. Extension requests must come >24h before deadline.",
+      "Self-declared absences are NOT accepted for group presentations (PRJ4 pitch, screenings).",
+    ],
+    schedule:[
+      ["Sep 9","Week 1 — Intro, Photography (sign out camera & tripod)",""],
+      ["Sep 15","PRJ1 Photography due (night before)",""],
+      ["Sep 16","Week 2 — Moving Pictures, Videography 1",""],
+      ["Sep 22","PRJ2 Treatment due (night before)",""],
+      ["Sep 23","Week 3 — Grammar of Film, Videography 2",""],
+      ["Sep 29","PRJ2 Roughcut due (night before)",""],
+      ["Sep 30","Week 4 — Roughcut screening & critique",""],
+      ["Oct 6","PRJ2 Final due (night before)",""],
+      ["Oct 7","Week 5 — Sound, Audio intro (sign out audio kit)",""],
+      ["Oct 12–18","READING WEEK",""],
+      ["Oct 20","PRJ3 Treatment due (night before)",""],
+      ["Oct 21","Week 6 — The Documentary 1; PRJ4 group formation",""],
+      ["Oct 28","Week 7 — Editing/Mixing Audio; GROUP DOC PITCH (all members)",""],
+      ["Nov 3","PRJ3 Roughcut + PRJ4 Treatment/Plan due (night before)",""],
+      ["Nov 4","Week 8 — The Documentary 3",""],
+      ["Nov 10","PRJ3 Final Mix + Work Journal Pt.1 due (night before)",""],
+      ["Nov 11","Week 9 — Set Jobs, Interview Practice",""],
+      ["Nov 18","Week 10 — Synchronizing Media Workshop",""],
+      ["Nov 24","PRJ4 Roughcut due (night before)",""],
+      ["Nov 25","Week 11 — Editing Documentary 2",""],
+      ["Dec 1","PRJ4 Final + all paperwork due (night before)",""],
+      ["Dec 2","Week 12 — Reflection, PRJ4 Final Screenings",""],
+      ["TBD","Work Journal Part 2 due — final assessment period",""],
+    ]
+  },
+  c203: {
+    code:"GBDA 203", name:"Introduction to Digital Culture", color:"var(--c203)",
+    instructor:"Dr. Noorin Manji", ta:"Emma Gaffney-Ladd",
+    meet:"Mondays, 9:00 – 11:50 AM", room:"DMS 2022 (Stratford)", section:"Section 001",
+    resources:[
+      {label:"No additional costs", note:"All readings posted on LEARN."},
+    ],
+    assignments:[
+      {label:"Term Task 1 — Student Introductions", due:"Sep 14, in class"},
+      {label:"Term Task 2 — Literature Seminar sign-up", due:"Sep 14, in class"},
+      {label:"Term Task 3 — Podcast sign-up", due:"Oct 4"},
+      {label:"Term Task 4 — Dialogue sign-up", due:"Oct 9"},
+      {label:"Literature Seminar (group presentation) — MINE", due:"Oct 5, in class"},
+      {label:"Contribution Review 1 — Literature Seminar", due:"Oct 5, end of day"},
+      {label:"Autoethnography (12%)", due:"Oct 25"},
+      {label:"Peer Content Review 1 — Autoethnography", due:"Nov 1"},
+      {label:"Digital Culture Dialogue (in-class, 12%)", due:"Nov 16"},
+      {label:"Podcast Assignment — Outline", due:"Nov 8"},
+      {label:"Podcast Assignment — Final (20%)", due:"Nov 29"},
+      {label:"Contribution Review 2 — Podcast", due:"Dec 6"},
+      {label:"Peer Content Review 2 — Podcast", due:"Dec 13"},
+    ],
+    grading:[
+      {key:"att", label:"Attendance & Contribution", weight:15, type:"single"},
+      {key:"tt", label:"Term Tasks (avg. of 4)", weight:4, type:"avgN", n:4},
+      {key:"lit", label:"Literature Seminar", weight:12, type:"single"},
+      {key:"cr1", label:"Contribution Review 1", weight:5, type:"single"},
+      {key:"auto", label:"Autoethnography", weight:12, type:"single"},
+      {key:"pcr1", label:"Peer Content Review 1", weight:5, type:"single"},
+      {key:"dial", label:"Digital Culture Dialogue", weight:12, type:"single"},
+      {key:"pout", label:"Podcast Outline", weight:5, type:"single"},
+      {key:"pfinal", label:"Podcast Final", weight:20, type:"single"},
+      {key:"cr2", label:"Contribution Review 2", weight:5, type:"single"},
+      {key:"pcr2", label:"Peer Content Review 2", weight:5, type:"single"},
+    ],
+    policies:[
+      "Only 10 classes count for Attendance & Contribution — marked with * on schedule.",
+      "All deliverables due 11:59 PM ET on the stated date unless noted otherwise.",
+    ],
+    schedule:[
+      ["Sep 14","*W1 — Course Intro (TT1, TT2 sign-up)",""],
+      ["Sep 21","*W2 — Everyday Technologies (Lit. Seminar)","Contribution Review 1 due EoD"],
+      ["Sep 28","*W3 — Digital Capitalism (Lit. Seminar)","TT3 sign-up due Oct 4"],
+      ["Oct 5","*W4 — Big Data — MY LITERATURE SEMINAR (presenting)","TT4 sign-up due Oct 9; Contribution Review 1 due EoD"],
+      ["Oct 10–18","READING WEEK",""],
+      ["Oct 19","*W5 — Social Movements & News (Lit. Seminars)","Autoethnography due Oct 25"],
+      ["Oct 26","W6 — Work Period (Podcast/Dialogue prep)","Peer Content Review 1 due Nov 1"],
+      ["Nov 2","*W7 — Digital Economies (Lit. Seminar)",""],
+      ["Nov 9","*W8 — Global Digital Contexts (Lit. Seminars)",""],
+      ["Nov 16","*W9 — DIGITAL CULTURE DIALOGUE (in-class)",""],
+      ["Nov 23","W10 — Work Period","Podcast Final due Nov 29"],
+      ["Nov 30","*W11 — AI & Ethics (Lit. Seminars)","Contribution Review 2 due Dec 6"],
+      ["Dec 7","*W12 — Course Conclusion","Peer Content Review 2 due Dec 13"],
+    ]
+  },
+  c205: {
+    code:"GBDA 205", name:"Quantitative Methods", color:"var(--c205)",
+    instructor:"Vivian Xiaofei Yang", ta:"TBA",
+    meet:"Online — no fixed meeting time", room:"—", section:"Section 001",
+    resources:[
+      {label:"Textbook: Improving the UX through Practical Data Analytics (Berger & Fritz)", note:"Free via O'Reilly (subject guide → login with WatIAM)."},
+      {label:"Microsoft Excel + Data Analysis ToolPak", note:"Required, free with UW Office subscription — enable ToolPak before Excel sessions."},
+    ],
+    assignments:[
+      {label:"Weekly participation survey", due:"Every Sunday, 11:59 PM"},
+      {label:"Exercise 1", due:"Oct 9 (Fri)"},
+      {label:"Video Proposal (Data Analysis Project, 10%)", due:"Oct 23 (Fri)"},
+      {label:"Exercise 2", due:"Nov 6 (Fri)"},
+      {label:"Exercise 3", due:"Dec 4 (Fri)"},
+      {label:"Data Analysis & Poster Report (30%)", due:"Dec 9 (Wed)"},
+    ],
+    grading:[
+      {key:"vid", label:"Video Proposal", weight:10, type:"single"},
+      {key:"poster", label:"Data Analysis & Poster Report", weight:30, type:"single"},
+      {key:"ex", label:"Exercises (avg. of 3)", weight:45, type:"avgN", n:3},
+      {key:"part", label:"Class Participation", weight:15, type:"single"},
+    ],
+    policies:[
+      "Late project work: 10% deducted per 24-hr period. No late exercises without prior communication.",
+      "Turnitin used to screen assignments.",
+    ],
+    schedule:[
+      ["Sep 7–13","W1 — Introduction of Course",""],
+      ["Sep 14–20","W2 — Intro & Statistical Fundamentals (Ch.1)",""],
+      ["Sep 21–27","W3 — Experimental Research & Design",""],
+      ["Sep 28–Oct 4","W4 — Comparing Two Means (Ch.2–3)",""],
+      ["Oct 5–11","W5 — Excel Session","Exercise 1 due Oct 9 (Fri)"],
+      ["Oct 12–18","READING WEEK",""],
+      ["Oct 19–25","W7 — Binomial Data (Ch.4–5)","Video Proposal due Oct 23 (Fri)"],
+      ["Oct 26–Nov 1","W8 — Comparing More Than Two Means (Ch.6–8)",""],
+      ["Nov 2–8","W9 — Excel Session","Exercise 2 due Nov 6 (Fri)"],
+      ["Nov 9–15","W10 — Relationship Between Two Variables (Ch.9)",""],
+      ["Nov 16–22","W11 — Multiple Regression (Ch.10)",""],
+      ["Nov 23–29","W12 — Binary Logistic Regression (Ch.11)",""],
+      ["Nov 30–Dec 6","W13 — Excel Session","Exercise 3 due Dec 4 (Fri)"],
+      ["Dec 7–13","W14","Data Analysis & Poster Report due Dec 9 (Wed)"],
+    ]
+  }
+};
+
+/* ---------------------------------------------------------------
+   STORAGE HELPERS (persistent, per-device)
+--------------------------------------------------------------- */
+async function storeGet(key){
+  try{
+    const r = await window.storage.get(key);
+    return r ? JSON.parse(r.value) : null;
+  }catch(e){ return null; }
+}
+async function storeSet(key, val){
+  try{ await window.storage.set(key, JSON.stringify(val)); }catch(e){}
+}
+
+/* ---------------------------------------------------------------
+   BUILD COURSE VIEWS
+--------------------------------------------------------------- */
+const courseViewsRoot = document.getElementById('course-views');
+
+function el(tag, attrs, ...children){
+  const e = document.createElement(tag);
+  if(attrs) for(const k in attrs){
+    if(k === 'html') e.innerHTML = attrs[k];
+    else e.setAttribute(k, attrs[k]);
+  }
+  children.forEach(c => { if(c) e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+  return e;
+}
+
+Object.keys(COURSES).forEach(id => {
+  const c = COURSES[id];
+  const view = el('div', {class:'view', id:'view-'+id, style:`--accent:${c.color}`});
+
+  const head = el('div', {class:'course-head'},
+    el('h2', null, c.code),
+    el('span', {class:'code'}, c.name)
+  );
+  view.appendChild(head);
+
+  const meta = el('div', {class:'meta-row'});
+  meta.appendChild(el('div', null, 'Instructor', el('span', null, c.instructor)));
+  meta.appendChild(el('div', null, 'TA', el('span', null, c.ta)));
+  meta.appendChild(el('div', null, 'Meets', el('span', null, c.meet)));
+  meta.appendChild(el('div', null, 'Room', el('span', null, c.room)));
+  meta.appendChild(el('div', null, 'Your Section', el('span', null, c.section)));
+  view.appendChild(meta);
+
+  // Required resources checklist
+  const resBlock = el('section', {class:'block'});
+  resBlock.appendChild(el('h3', null, 'Required Materials & Resources'));
+  resBlock.appendChild(el('div', {class:'progress-label', id:`res-progress-label-${id}`}));
+  resBlock.appendChild(el('div', {class:'progress-wrap'}, el('div', {class:'progress-bar', id:`res-progress-${id}`})));
+  const resList = el('div', {id:`res-list-${id}`});
+  c.resources.forEach((r, i) => {
+    const row = el('div', {class:'check-row'},
+      el('input', {type:'checkbox', id:`res-${id}-${i}`}),
+      el('label', {for:`res-${id}-${i}`}, r.label, el('span', {class:'due'}, r.note))
+    );
+    resList.appendChild(row);
+  });
+  resBlock.appendChild(resList);
+  view.appendChild(resBlock);
+
+  // Assignments checklist
+  const asBlock = el('section', {class:'block'});
+  asBlock.appendChild(el('h3', null, 'Assignments & Deliverables'));
+  asBlock.appendChild(el('div', {class:'progress-label', id:`as-progress-label-${id}`}));
+  asBlock.appendChild(el('div', {class:'progress-wrap'}, el('div', {class:'progress-bar', id:`as-progress-${id}`})));
+  const asList = el('div', {id:`as-list-${id}`});
+  c.assignments.forEach((a, i) => {
+    const row = el('div', {class:'check-row'},
+      el('input', {type:'checkbox', id:`as-${id}-${i}`}),
+      el('label', {for:`as-${id}-${i}`}, a.label, el('span', {class:'due'}, 'Due: ' + a.due))
+    );
+    asList.appendChild(row);
+  });
+  asBlock.appendChild(asList);
+  view.appendChild(asBlock);
+
+  // Grade calculator
+  const gBlock = el('section', {class:'block'});
+  gBlock.appendChild(el('h3', null, 'Grade Calculator'));
+  const gTable = el('table', {class:'grade-table'});
+  gTable.appendChild(el('tr', null,
+    el('th', null, 'Component'), el('th', null, 'Weight'), el('th', null, 'Your Score (%)')
+  ));
+  const gBody = el('tbody', {id:`grade-body-${id}`});
+  c.grading.forEach(g => {
+    const tr = el('tr', null);
+    tr.appendChild(el('td', null, g.label));
+    tr.appendChild(el('td', null, g.weight + '%'));
+    const scoreCell = el('td', null);
+    if(g.type === 'single'){
+      scoreCell.appendChild(el('input', {type:'number', min:'0', max:'100', step:'0.5', id:`grade-${id}-${g.key}`, placeholder:'—'}));
+    } else {
+      const sub = el('div', {class:'subgrid'});
+      for(let i=0;i<g.n;i++){
+        const wrap = el('div', {class:'sub-item'});
+        wrap.appendChild(el('input', {type:'number', min:'0', max:'100', step:'0.5', id:`grade-${id}-${g.key}-${i}`, placeholder:'—'}));
+        wrap.appendChild(document.createElement('br'));
+        wrap.appendChild(document.createTextNode('#'+(i+1)));
+        sub.appendChild(wrap);
+      }
+      scoreCell.appendChild(sub);
+      if(g.type === 'bestN'){
+        scoreCell.appendChild(el('div', {class:'note'}, `Best ${g.best} of ${g.n} count.`));
+      }
+    }
+    tr.appendChild(scoreCell);
+    gBody.appendChild(tr);
+  });
+  gTable.appendChild(gBody);
+  gBlock.appendChild(gTable);
+
+  const summary = el('div', {class:'calc-summary'},
+    el('div', {class:'stat'}, el('div', {class:'num', id:`banked-${id}`}, '0'), el('div', {class:'lbl'}, 'Points banked / 100')),
+    el('div', {class:'stat'}, el('div', {class:'num', id:`avg-${id}`}, '—'), el('div', {class:'lbl'}, 'Average on completed work')),
+    el('div', {class:'stat'}, el('div', {class:'num', id:`remaining-${id}`}, '100%'), el('div', {class:'lbl'}, 'Weight remaining'))
+  );
+  gBlock.appendChild(summary);
+
+  const targetRow = el('div', {class:'target-row'},
+    document.createTextNode('Target final grade: '),
+    el('input', {type:'number', min:'0', max:'100', step:'0.5', id:`target-${id}`, value:'80'}),
+    document.createTextNode('%'),
+    el('button', {onclick:`calcNeeded('${id}')`}, 'Calculate what I need')
+  );
+  gBlock.appendChild(targetRow);
+  gBlock.appendChild(el('div', {class:'needed-msg', id:`needed-${id}`, style:'display:none'}));
+  view.appendChild(gBlock);
+
+  // Weekly schedule
+  const schedBlock = el('section', {class:'block'});
+  schedBlock.appendChild(el('h3', null, 'Weekly Schedule'));
+  const schedTable = el('table', {class:'grade-table'});
+  schedTable.appendChild(el('tr', null, el('th', null, 'Date'), el('th', null, 'Topic'), el('th', null, 'Due')));
+  c.schedule.forEach(row => {
+    schedTable.appendChild(el('tr', null, el('td', null, row[0]), el('td', null, row[1]), el('td', null, row[2] || '')));
+  });
+  schedBlock.appendChild(schedTable);
+  view.appendChild(schedBlock);
+
+  // Policies quick reference
+  if(c.policies && c.policies.length){
+    const polBlock = el('section', {class:'block'});
+    polBlock.appendChild(el('h3', null, 'Quick Policy Reference'));
+    c.policies.forEach(p => polBlock.appendChild(el('div', {class:'policy-item'}, p)));
+    view.appendChild(polBlock);
+  }
+
+  courseViewsRoot.appendChild(view);
+});
+
+/* ---------------------------------------------------------------
+   NAVIGATION
+--------------------------------------------------------------- */
+document.querySelectorAll('.navitem').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.navitem').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    const target = item.dataset.view;
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const viewEl = document.getElementById('view-' + target);
+    if(viewEl) viewEl.classList.add('active');
+  });
+});
+document.querySelector('.navitem[data-view="overview"]').classList.add('active');
+document.getElementById('view-overview').classList.add('active');
+
+/* ---------------------------------------------------------------
+   OVERVIEW CARDS
+--------------------------------------------------------------- */
+const overviewList = document.getElementById('overview-list');
+Object.keys(COURSES).forEach(id => {
+  const c = COURSES[id];
+  const card = el('div', {class:'overview-card', style:`--course-color:${c.color}`});
+  card.appendChild(el('div', null,
+    el('h4', null, c.code + ' — ' + c.name),
+    el('div', {class:'sub'}, c.meet + ' · ' + c.room + ' · ' + c.instructor)
+  ));
+  card.appendChild(el('div', {class:'go'}, 'Open →'));
+  card.addEventListener('click', () => document.querySelector(`.navitem[data-view="${id}"]`).click());
+  overviewList.appendChild(card);
+});
+
+/* ---------------------------------------------------------------
+   CHECKLIST PERSISTENCE
+--------------------------------------------------------------- */
+async function initChecklist(id, kind, count){
+  const key = `${kind}:${id}`;
+  const saved = (await storeGet(key)) || {};
+  for(let i=0;i<count;i++){
+    const cb = document.getElementById(`${kind}-${id}-${i}`);
+    if(!cb) continue;
+    cb.checked = !!saved[i];
+    updateRowDone(cb);
+    cb.addEventListener('change', async () => {
+      updateRowDone(cb);
+      const cur = (await storeGet(key)) || {};
+      cur[i] = cb.checked;
+      await storeSet(key, cur);
+      updateProgress(id, kind, count);
+    });
+  }
+  updateProgress(id, kind, count);
+}
+function updateRowDone(cb){
+  const row = cb.closest('.check-row');
+  if(row) row.classList.toggle('done', cb.checked);
+}
+function updateProgress(id, kind, count){
+  let done = 0;
+  for(let i=0;i<count;i++){
+    const cb = document.getElementById(`${kind}-${id}-${i}`);
+    if(cb && cb.checked) done++;
+  }
+  const pct = count ? Math.round(done/count*100) : 0;
+  const bar = document.getElementById(`${kind === 'res' ? 'res' : 'as'}-progress-${id}`);
+  const lbl = document.getElementById(`${kind === 'res' ? 'res' : 'as'}-progress-label-${id}`);
+  if(bar) bar.style.width = pct + '%';
+  if(lbl) lbl.textContent = `${done} of ${count} complete (${pct}%)`;
+}
+
+Object.keys(COURSES).forEach(id => {
+  const c = COURSES[id];
+  initChecklist(id, 'res', c.resources.length);
+  initChecklist(id, 'as', c.assignments.length);
+});
+
+/* ---------------------------------------------------------------
+   GRADE CALCULATOR
+--------------------------------------------------------------- */
+function num(v){ const n = parseFloat(v); return isNaN(n) ? null : n; }
+
+function computeCourse(id){
+  const c = COURSES[id];
+  let banked = 0, completedWeight = 0;
+  c.grading.forEach(g => {
+    let score = null;
+    if(g.type === 'single'){
+      const v = num(document.getElementById(`grade-${id}-${g.key}`).value);
+      if(v !== null) score = v;
+    } else {
+      const vals = [];
+      for(let i=0;i<g.n;i++){
+        const v = num(document.getElementById(`grade-${id}-${g.key}-${i}`).value);
+        if(v !== null) vals.push(v);
+      }
+      if(vals.length){
+        if(g.type === 'bestN'){
+          vals.sort((a,b)=>b-a);
+          const used = vals.slice(0, Math.min(g.best, vals.length));
+          score = used.reduce((a,b)=>a+b,0) / used.length;
+        } else {
+          score = vals.reduce((a,b)=>a+b,0) / vals.length;
+        }
+      }
+    }
+    if(score !== null){
+      banked += (score/100) * g.weight;
+      completedWeight += g.weight;
+    }
+  });
+  return {banked, completedWeight, remaining: 100 - completedWeight};
+}
+
+function refreshCourse(id){
+  const {banked, completedWeight, remaining} = computeCourse(id);
+  document.getElementById(`banked-${id}`).textContent = banked.toFixed(1);
+  document.getElementById(`avg-${id}`).textContent = completedWeight > 0 ? (banked/completedWeight*100).toFixed(1) + '%' : '—';
+  document.getElementById(`remaining-${id}`).textContent = remaining.toFixed(0) + '%';
+  const msg = document.getElementById(`needed-${id}`);
+  if(msg) msg.style.display = 'none';
+}
+
+function calcNeeded(id){
+  const {banked, remaining} = computeCourse(id);
+  const target = num(document.getElementById(`target-${id}`).value);
+  const msg = document.getElementById(`needed-${id}`);
+  msg.style.display = 'block';
+  msg.classList.remove('ok','bad');
+  if(target === null){ msg.textContent = 'Enter a target grade first.'; return; }
+  if(remaining <= 0){
+    if(banked >= target){ msg.classList.add('ok'); msg.textContent = `All components are entered. Final grade: ${banked.toFixed(1)}% — target met.`; }
+    else { msg.classList.add('bad'); msg.textContent = `All components are entered. Final grade: ${banked.toFixed(1)}% — target of ${target}% was not reached.`; }
+    return;
+  }
+  const needed = (target - banked) / remaining * 100;
+  if(needed > 100){
+    msg.classList.add('bad');
+    msg.textContent = `Even 100% on everything remaining (${remaining.toFixed(0)}% of the course) only reaches ${(banked + remaining).toFixed(1)}%. Target of ${target}% is not reachable from here.`;
+  } else if(needed < 0){
+    msg.classList.add('ok');
+    msg.textContent = `Target already secured — you're at ${banked.toFixed(1)} banked points with ${remaining.toFixed(0)}% left to go.`;
+  } else {
+    msg.classList.add('ok');
+    msg.textContent = `You need an average of ${needed.toFixed(1)}% on the remaining ${remaining.toFixed(0)}% of the course to reach ${target}%.`;
+  }
+}
+
+async function initGrades(id){
+  const c = COURSES[id];
+  const key = `grades:${id}`;
+  const saved = (await storeGet(key)) || {};
+  c.grading.forEach(g => {
+    if(g.type === 'single'){
+      const inp = document.getElementById(`grade-${id}-${g.key}`);
+      if(saved[g.key] !== undefined) inp.value = saved[g.key];
+      inp.addEventListener('input', async () => {
+        const cur = (await storeGet(key)) || {};
+        cur[g.key] = inp.value;
+        await storeSet(key, cur);
+        refreshCourse(id);
+      });
+    } else {
+      for(let i=0;i<g.n;i++){
+        const subKey = g.key + '-' + i;
+        const inp = document.getElementById(`grade-${id}-${subKey}`);
+        if(saved[subKey] !== undefined) inp.value = saved[subKey];
+        inp.addEventListener('input', async () => {
+          const cur = (await storeGet(key)) || {};
+          cur[subKey] = inp.value;
+          await storeSet(key, cur);
+          refreshCourse(id);
+        });
+      }
+    }
+  });
+  const targetInp = document.getElementById(`target-${id}`);
+  const savedTarget = await storeGet(`target:${id}`);
+  if(savedTarget !== null && savedTarget !== undefined) targetInp.value = savedTarget;
+  targetInp.addEventListener('input', () => storeSet(`target:${id}`, targetInp.value));
+  refreshCourse(id);
+}
+Object.keys(COURSES).forEach(id => initGrades(id));
+
+/* ---------------------------------------------------------------
+   STUDY TRACKER EXPORT
+--------------------------------------------------------------- */
+function generateTracker(mode){
+  const lines = [];
+  lines.push('GBDA FALL 2026 — COURSE WORKLOAD SUMMARY');
+  lines.push('(Generated from my course guidebook — please help me schedule study/homework blocks around my weekly availability)');
+  lines.push('='.repeat(70));
+  lines.push('');
+  lines.push('MY FIVE COURSES:');
+  Object.keys(COURSES).forEach(id => {
+    const c = COURSES[id];
+    lines.push(`- ${c.code} (${c.name}) — ${c.meet}, ${c.room}`);
+  });
+  lines.push('');
+
+  Object.keys(COURSES).forEach(id => {
+    const c = COURSES[id];
+    lines.push('-'.repeat(70));
+    lines.push(`${c.code} — ${c.name}`);
+    lines.push(`Meets: ${c.meet} | Room: ${c.room} | Instructor: ${c.instructor}`);
+    lines.push('Grading weights: ' + c.grading.map(g => `${g.label} ${g.weight}%`).join(', '));
+    lines.push('');
+    lines.push('Schedule / deadlines:');
+    c.schedule.forEach(row => {
+      lines.push(`  ${row[0]}: ${row[1]}${row[2] ? '  [' + row[2] + ']' : ''}`);
+    });
+    lines.push('');
+  });
+
+  lines.push('-'.repeat(70));
+  lines.push('NOTE: "Next 14 days" filtering is approximate — dates above are the full ');
+  lines.push('semester schedule; please cross-check against the current date when scheduling.');
+
+  document.getElementById('tracker-output').value = lines.join('\n');
+}
+
+function copyTracker(){
+  const box = document.getElementById('tracker-output');
+  if(!box.value){ generateTracker('full'); }
+  box.select();
+  document.execCommand('copy');
+}
+
+// Generate full summary by default on load
+generateTracker('full');
+</script>
+</body>
+</html>
